@@ -20,8 +20,10 @@ var remote = {
 	}
 };
 
-remote.invoke('Input.Left', function(data) {
+remote.invoke('Input.Right', function(data) {
 	if(typeof data.error === 'undefined') {
 		console.log('I can forward', data);
 	}
 });
+
+module.exports = remote;
