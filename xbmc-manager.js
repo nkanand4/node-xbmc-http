@@ -26,6 +26,8 @@ http.createServer(function (req, res) {
     // be on safe side, clear timers anyways
     clearTimeout(timer);
     clearInterval(repeater);
+    // wake up if sleeping
+    remote.add('Player.GetActivePlayers');
     if( code in ROKU_KEY_MAP) {
       remote.add(ROKU_KEY_MAP[code]);
     }
@@ -34,8 +36,8 @@ http.createServer(function (req, res) {
       // send last command repeatedly.
         repeater = setInterval(function() {
           remote.add(ROKU_KEY_MAP[code]);
-        }, 500);
-      }, 1500);
+        }, 300);
+      }, 1000);
     }
   }
   res.writeHead(200, {'Content-Type': 'text/javascript'});
