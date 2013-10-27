@@ -1,6 +1,5 @@
 var xbmcApi = require('./main');
 var connection;
-var queue = [];
 var specials = {
     'ShowOSD' : {
     	'noplayer': 'Input.ContextMenu'

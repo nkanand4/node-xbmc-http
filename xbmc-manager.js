@@ -2,13 +2,14 @@ var http = require('http');
 var fs = require('fs');
 var exec = require('child_process').exec;
 var index = fs.readFileSync('/home/nitesh/Developer/workspace/xbmc-manager/found.js');
-var ROKU_KEY_MAP = {100:"Input.Back",102:"Input.Up",103:"Input.Down",
-                        104:"Input.Left",105:"Input.Right",106:"Input.Select",107:"Input.ShowOSD",
-                        108:"Player.Rewind",109:"Player.Forward",110:"Input.Info",113:"Player.PlayPause"};
 var remote = require('./xbmc-remote');
+var ROKU_KEY_MAP = {0:"Input.Back", 2:"Input.Up", 3:"Input.Down",
+                        4:"Input.Left", 5:"Input.Right", 6:"Input.Select", 7:"Input.ShowOSD",
+                        8:"Player.Rewind", 9:"Player.Forward", 10:"Input.Info", 13:"Player.PlayPause"};
+var timer, repeater;
 
 http.createServer(function (req, res) {
-  var v1;
+  var code, upcode;
   if(/pingcheck/.test(req.url)) {
     exec('sh /home/nitesh/scripts/xbmcstarter');
   }
@@ -20,9 +21,21 @@ http.createServer(function (req, res) {
   }
   if(/xbmc\/commands/.test(req.url)) {
     //remote.connect();
-    v1 = req.url.replace(/\/xbmc\/commands\//,'')
-    if( v1 in ROKU_KEY_MAP) {
-      remote.add(ROKU_KEY_MAP[v1]);
+    code = req.url.replace(/\/xbmc\/commands\//,'')
+    //upcode = code < 100 ? code + 100 : code;
+    // be on safe side, clear timers anyways
+    clearTimeout(timer);
+    clearInterval(repeater);
+    if( code in ROKU_KEY_MAP) {
+      remote.add(ROKU_KEY_MAP[code]);
+    }
+    if(code < 6) {
+      timer = setTimeout(function() {
+      // send last command repeatedly.
+        repeater = setInterval(function() {
+          remote.add(ROKU_KEY_MAP[code]);
+        }, 500);
+      }, 1500);
     }
   }
   res.writeHead(200, {'Content-Type': 'text/javascript'});
