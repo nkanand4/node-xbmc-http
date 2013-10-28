@@ -1,4 +1,4 @@
-var modules = ['Player', 'Input'];
+var modules = ['Player', 'Input', 'Application'];
 var instances = {};
 
 modules.forEach(function(module) {
@@ -20,10 +20,12 @@ var remote = {
 	}
 };
 
-/*remote.invoke('Input.Right', function(data) {
+/*
+remote.invoke('Application.IncreaseVolume', function(data) {
 	if(typeof data.error === 'undefined') {
-		console.log('I can forward', data);
+		console.log('I can change volume', data);
 	}
-});*/
+});
+//*/
 
 module.exports = remote;
