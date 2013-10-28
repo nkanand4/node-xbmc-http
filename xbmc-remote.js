@@ -44,6 +44,10 @@ module.exports = {
                 }
             });
         }
-        xbmcApi.invoke(signal);
+        try {
+            xbmcApi.invoke(signal);
+        }catch(e) {
+            console.log('Error occured', e);
+        }
     }
 };
