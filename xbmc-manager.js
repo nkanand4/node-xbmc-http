@@ -31,7 +31,7 @@ http.createServer(function (req, res) {
     if( code in ROKU_KEY_MAP) {
       remote.add(ROKU_KEY_MAP[code]);
     }
-    if(code < 6) {
+    if(code < 7) {
       timer = setTimeout(function() {
       // send last command repeatedly.
         repeater = setInterval(function() {

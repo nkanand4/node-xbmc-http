@@ -14,10 +14,11 @@ var specials = {
 
 
 module.exports = {
-    changeDefaults: function(xbmcApi) {
-        //xbmcApi.application.defaults.stepVol = 10;
+    changeDefaults: function() {
+        xbmcApi.getInstance('Application').step = 5;
     },
     add: function(cmd) {
+        this.changeDefaults();
         this.fire(cmd);
     },
     identifyCommand: function(command) {

@@ -17,6 +17,14 @@ var remote = {
 		}
 		// example: invoking Player.invoke('PlayPause', arguments);
 		instances[category].invoke.apply(instances[category], [name].concat(args));
+	},
+	getInstance: function(name) {
+		if(name in instances) {
+			return instances[name];
+		}else {
+			console.log('Instance ', name,' not found');
+			return undefined;
+		}
 	}
 };
 
