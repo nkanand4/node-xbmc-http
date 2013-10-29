@@ -24,13 +24,14 @@ http.createServer(function (req, res) {
     code = req.url.replace(/\/xbmc\/commands\//,'')
     //upcode = code < 100 ? code + 100 : code;
     // be on safe side, clear timers anyways
-    clearTimeout(timer);
-    clearInterval(repeater);
+    //clearTimeout(timer);
+    //clearInterval(repeater);
     // wake up if sleeping
     remote.add('Player.GetActivePlayers');
     if( code in ROKU_KEY_MAP) {
       remote.add(ROKU_KEY_MAP[code]);
     }
+    /* removing setInterval as it is scary, will re-visit with setTimeout
     if(code < 7) {
       timer = setTimeout(function() {
       // send last command repeatedly.
@@ -38,7 +39,7 @@ http.createServer(function (req, res) {
           remote.add(ROKU_KEY_MAP[code]);
         }, 300);
       }, 1000);
-    }
+    }*/
   }
   res.writeHead(200, {'Content-Type': 'text/javascript'});
   res.end(index);
