@@ -1,7 +1,8 @@
 var http = require('http');
 var fs = require('fs');
 var exec = require('child_process').exec;
-var index = fs.readFileSync('/home/nitesh/Developer/workspace/xbmc-manager/found.js');
+var restartTracker = 0;
+var index = fs.readFileSync('/home/pi/developer/node-xbmc-http/found.js');
 var remote = require('./xbmc-remote');
 var ROKU_KEY_MAP = {0:"Input.Back", 2:"Input.Up", 3:"Input.Down",
                         4:"Input.Left", 5:"Input.Right", 6:"Input.Select", 7:"Input.ShowOSD",
@@ -10,14 +11,16 @@ var timer, repeater;
 
 http.createServer(function (req, res) {
   var code, upcode;
-  if(/pingcheck/.test(req.url)) {
-    exec('sh /home/nitesh/scripts/xbmcstarter');
-  }
+    console.log('Doing something');
   if(/shutdown/.test(req.url)) {
-    exec('sh /home/nitesh/scripts/xbmcshutdown');
+    exec('sh /home/pi/developer/scripts/xbmcshutdown');
   }
   if(/poweroff/.test(req.url)) {
-    exec('sudo sh /home/nitesh/scripts/shutdown');
+    exec('sudo sh /home/pi/developer/scripts/shutdown');
+  }
+  if(/restart/.test(req.url)) {
+    console.log('Doing restart');
+    exec('sh /home/pi/developer/scripts/restartxbmc');
   }
   if(/xbmc\/commands/.test(req.url)) {
     //remote.connect();
@@ -30,6 +33,16 @@ http.createServer(function (req, res) {
     remote.add('Player.GetActivePlayers');
     if( code in ROKU_KEY_MAP) {
       remote.add(ROKU_KEY_MAP[code]);
+    }
+    if(ROKU_KEY_MAP[code] === "Input.Info" || code == 110) {
+        restartTracker += 1;
+    }else {
+        restartTracker = 0;
+    }
+    if(restartTracker === 10) {
+        console.log('Doing restart');
+        restartTracker = 0;
+        exec('sh /home/pi/developer/scripts/restartxbmc');
     }
     /* removing setInterval as it is scary, will re-visit with setTimeout
     if(code < 7) {
