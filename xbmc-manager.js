@@ -1,8 +1,9 @@
 var http = require('http');
 var fs = require('fs');
+var path = require('path');
 var exec = require('child_process').exec;
 var restartTracker = 0;
-var index = fs.readFileSync('/home/pi/developer/node-xbmc-http/found.js');
+var index = fs.readFileSync(process.env.XBMC_REMOTE+'/found.js');
 var remote = require('./xbmc-remote');
 var ROKU_KEY_MAP = {0:"Input.Back", 2:"Input.Up", 3:"Input.Down",
                         4:"Input.Left", 5:"Input.Right", 6:"Input.Select", 7:"Input.ShowOSD",
@@ -21,6 +22,15 @@ http.createServer(function (req, res) {
   if(/restart/.test(req.url)) {
     console.log('Doing restart');
     exec('sh /home/pi/developer/scripts/restartxbmc');
+  }
+  if(/xbmc\/jump/.test(req.url)) {
+    var params = decodeURIComponent(path.basename(req.url));
+    try{
+      params = JSON.parse(params);
+    }catch(e) {
+      // not an object, just a string
+    }
+    remote.add('Player.Seek', params);
   }
   if(/xbmc\/commands/.test(req.url)) {
     //remote.connect();

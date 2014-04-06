@@ -34,6 +34,7 @@ remote.invoke('Application.IncreaseVolume', function(data) {
 		console.log('I can change volume', data);
 	}
 });
+//remote.invoke('Player.Seek', {hours: 1, minutes: 10, seconds: 10});
 //*/
 
 module.exports = remote;

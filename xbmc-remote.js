@@ -18,8 +18,9 @@ module.exports = {
         xbmcApi.getInstance('Application').step = 5;
     },
     add: function(cmd) {
+        var args = [].splice.call(arguments, 0);
         this.changeDefaults();
-        this.fire(cmd);
+        this.fire.apply(this, args);
     },
     identifyCommand: function(command) {
         var temp = command.split('.');
@@ -32,6 +33,7 @@ module.exports = {
     },
     fire: function(signal) {
         var self = this;
+        var args = [].splice.call(arguments,1);
         command = self.identifyCommand(signal);
         console.log('Doing', command.name, 'on', command.category);
         if (command.name in specials) {
@@ -45,7 +47,8 @@ module.exports = {
             });
         }
         try {
-            xbmcApi.invoke(signal);
+            console.log('Invoking...', signal, xbmcApi);
+            xbmcApi.invoke.apply(xbmcApi, [signal].concat(args));
         }catch(e) {
             console.log('Error occured', e);
         }
