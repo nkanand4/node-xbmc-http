@@ -41,7 +41,7 @@ module.exports = {
                 var specialCommand
                     condition = data.result.length === 0 ? 'noplayer' : 'player';
                 console.log('Got specials one for ', condition);
-                if (specials[command.name][condition]) {
+                if (condition in specials[command.name]) {
                     self.add(specials[command.name][condition]);
                 }
             });
