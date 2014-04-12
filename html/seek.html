@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Seek to time</title>
+
+    <script type="text/javascript" src="jquery.js"></script>
+
+</head>
+
+<body id="index" class="home">
+<div>
+    <fieldset>
+        Hr:
+        <select id="hours">
+        </select>
+        Mins:
+        <select id="minutes">
+        </select>
+        Secs:
+        <select id="seconds">
+        </select>
+        <button class="seek" id="jump">Jump</button>
+        <div style="margin-top: 10px;">
+            <button class="seek" id="smallbackward"> &lt;&lt; 30 sec</button>
+            <button class="seek" id="smallforward">30 sec &gt;&gt;</button>
+            <button class="seek" id="bigbackward">10 min &lt;&lt;</button>
+            <button class="seek" id="bigforward">10 min &gt;&gt;</button>
+        </div>
+    </fieldset>
+</div>
+<div>
+    <fieldset>
+        <label>Text:</label>
+        <textarea id="text"></textarea>
+        <button id="sendText">Send</button>
+    </fieldset>
+</div>
+</body>
+<script type="text/javascript">
+    function createOptions(select) {
+        var to, options = '';
+        switch(select) {
+            case 'hours':
+                to = 23;
+                break;
+            default:
+                to = 59;
+                break;
+        }
+        for (var i = 0; i < to; i++) {
+            options += '<option value="'+i+'">'+i+'</option>';
+        }
+        jQuery('#'+select).append(options);
+    }
+    createOptions('hours');
+    createOptions('minutes');
+    createOptions('seconds');
+
+
+    function send(url, data, stringify) {
+        if(stringify) {
+            data = JSON.stringify(data);
+        }
+        data = encodeURIComponent(data);
+        jQuery.ajaxSetup({
+            cache: true
+        });
+        jQuery.getScript('http://localhost:12480/'+url+'/'+data);
+    }
+
+    jQuery('.seek').click(function() {
+        var data = $(this).attr('id');
+        if(data === 'jump') {
+            data = {
+                hours: $('#hours').val(),
+                minutes: $('#minutes').val(),
+                seconds: $('#seconds').val()
+            };
+            send('xbmc/jump', data, true);
+        }else {
+            send('xbmc/jump', data);
+        }
+    });
+    jQuery('#sendText').click(function() {
+        var text = jQuery.trim(jQuery('#text').val());
+        if(text) {
+            send('xbmc/direct/', {
+                api: 'Input.bypassSendText',
+                params: {
+                    text: text
+                }
+            }, true)
+        }
+    });
+</script>
+</html>

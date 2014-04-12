@@ -32,6 +32,17 @@ http.createServer(function (req, res) {
     }
     remote.add('Player.Seek', params);
   }
+  if(/xbmc\/direct/.test(req.url)) {
+    var api, params = decodeURIComponent(path.basename(req.url));
+    try{
+      params = JSON.parse(params);
+      api = params.api;
+      delete params.api;
+      remote.add(api, params);
+    }catch(e) {
+      console.log('Not a json string');
+    }
+  }
   if(/xbmc\/commands/.test(req.url)) {
     //remote.connect();
     code = req.url.replace(/\/xbmc\/commands\//,'')
@@ -54,15 +65,6 @@ http.createServer(function (req, res) {
         restartTracker = 0;
         exec('sh /home/pi/developer/scripts/restartxbmc');
     }
-    /* removing setInterval as it is scary, will re-visit with setTimeout
-    if(code < 7) {
-      timer = setTimeout(function() {
-      // send last command repeatedly.
-        repeater = setInterval(function() {
-          remote.add(ROKU_KEY_MAP[code]);
-        }, 300);
-      }, 1000);
-    }*/
   }
   res.writeHead(200, {'Content-Type': 'text/javascript'});
   res.end(index);
