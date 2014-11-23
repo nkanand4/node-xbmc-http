@@ -3,7 +3,7 @@ var fs = require('fs');
 var path = require('path');
 var exec = require('child_process').exec;
 var restartTracker = 0;
-var index = fs.readFileSync(process.env.XBMC_REMOTE+'/found.js');
+var index;// = fs.readFileSync(process.env.XBMC_REMOTE+'/found.js');
 var remote = require('./xbmc-remote');
 var ROKU_KEY_MAP = {0:"Input.Back", 2:"Input.Up", 3:"Input.Down",
                         4:"Input.Left", 5:"Input.Right", 6:"Input.Select", 7:"Input.ShowOSD",
@@ -66,6 +66,21 @@ http.createServer(function (req, res) {
         exec('sh /home/pi/developer/scripts/restartxbmc');
     }
   }
-  res.writeHead(200, {'Content-Type': 'text/javascript'});
-  res.end(index);
+  if(/^\/html/.test(req.url)) {
+    fs.readFile(process.env.XBMC_REMOTE+'/html/'+req.url.replace(/\/html\//, ''), {encoding: 'utf-8'}, function(err, data) {
+      var content = '';
+      if(err) {
+        content = 'File not found or could not be read!';
+      }else {
+        content = data;
+        res.setHeader('Cache-Control', 'private, max-age=604800')
+      }
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.end(content);
+    });
+  }else {
+    res.writeHead(200, {'Content-Type': 'text/javascript'});
+    res.end('json request acknowledge.');
+  }
+
 }).listen(12480);
