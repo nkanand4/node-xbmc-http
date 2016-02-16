@@ -9,6 +9,15 @@ var specials = {
     },
     'Down': {
     	'player': 'Application.ReduceVolume'
+    },
+    'Right': {
+        'player': 'Player.Forward'
+    },
+    'Left': {
+        'player': 'Player.Rewind'
+    },
+    'Select': {
+        'player': 'Player.Stop'
     }
 };
 

@@ -12,7 +12,6 @@ var timer, repeater;
 
 http.createServer(function (req, res) {
   var code, upcode;
-    console.log('Doing something');
   if(/shutdown/.test(req.url)) {
     exec('sh /home/pi/developer/scripts/xbmcshutdown');
   }
