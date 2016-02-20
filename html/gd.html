@@ -5,20 +5,69 @@
     <meta charset="utf-8" />
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Seek to time</title>
+    <title>Garage door controller</title>
 
     <script type="text/javascript" src="jquery.js"></script>
 
 </head>
 
 <body id="index" class="home">
-<button>Toggle garage door</button>
+<div style="text-align: center;">
+	<button style="height: 30px;" id="toggle">Toggle garage door</button>
+	<button style="height: 30px;" id="waitforme" >Wait until I am back</button>
+</div>
+<div style="text-align: center; margin-top: 15px;">
+	<button style="height: 30px;" id="lighton">Turn on light</button>
+	<button style="height: 30px;" id="lightoff">Turn it off</button>
+</div>
+<span id="message"></span>
 </body>
 <script type="text/javascript">
-jQuery('button').on('click', function() {
-	jQuery.get('/api/toggledoo').success(function() {
+function toggledoorplz() {
+	jQuery('#message').html('');
+	jQuery.get('/api/toggledoor').success(function() {
+		jQuery('#message').html('Garage door state changed.');
 		console.log('Opening the door');
 	});
+}
+
+function lightcontroller(state) {
+	jQuery.get('/api/togglelight/'+state).success(function() {
+		jQuery('#message').html('Garage door state changed.');
+		console.log('Opening the door');
+	});
+}
+
+jQuery('#toggle').on('click', function() {
+	toggledoorplz();
+});
+jQuery('#lighton').on('click', function() {
+	lightcontroller('on');
+});
+jQuery('#lightoff').on('click', function() {
+	lightcontroller('off');
+});
+
+jQuery('#waitforme').on('click', function() {
+	var begin = false;
+	toggledoorplz();
+	function waitUntilReturn() {
+		$.ajax({url: '/api/pingcheck', timeout: 5000}).error(function() {
+			console.log('we should begin waiting for you');
+			begin = true;
+			setTimeout(waitUntilReturn, 2 * 1000);
+		}).success(function() {
+			if(!begin) {
+				console.log('You are still here');
+				setTimeout(waitUntilReturn, 2*1000);
+			}else {
+				console.log('welcome back! opening the door.');
+				toggledoorplz();
+				begin = false;
+			}
+		}) 
+	}
+	waitUntilReturn();
 });
 </script>
 </html>

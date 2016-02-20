@@ -65,6 +65,18 @@ http.createServer(function (req, res) {
         exec('sh /home/pi/developer/scripts/restartxbmc');
     }
   }
+
+  if(/toggledoor/.test(req.url)) {
+    console.log('Toggling door');
+    //exec('echo $(date) >> /home/pi/logs/relay.log')
+    exec('sudo python /home/pi/developer/scripts/toggledoor >> /home/pi/logs/relay.log');
+  }
+  if(/togglelight/.test(req.url)) {
+    var lightparams = req.url.replace('/api/togglelight/', '');
+    console.log('controlling light', lightparams);
+    exec('sudo python /home/pi/developer/scripts/togglelight '+lightparams+'>> /home/pi/logs/relay.log');
+  }
+
   if(/^\/html/.test(req.url)) {
     fs.readFile(process.env.XBMC_REMOTE+'/html/'+req.url.replace(/\/html\//, ''), {encoding: 'utf-8'}, function(err, data) {
       var content = '';
@@ -79,7 +91,10 @@ http.createServer(function (req, res) {
     });
   }else {
     res.writeHead(200, {'Content-Type': 'text/javascript'});
-    res.end('json request acknowledge.');
+    res.end('var message = "json request acknowledge."');
   }
 
 }).listen(12480);
+
+//setting up relay(s) for web access
+exec('sudo python /home/pi/developer/scripts/relay-setup')
