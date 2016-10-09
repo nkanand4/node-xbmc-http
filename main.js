@@ -1,4 +1,4 @@
-var modules = ['Player', 'Input', 'Application'];
+var modules = ['Player', 'Input', 'Application', 'GUI'];
 var instances = {};
 
 modules.forEach(function(module) {
@@ -35,6 +35,8 @@ remote.invoke('Application.IncreaseVolume', function(data) {
 	}
 });
 //remote.invoke('Player.Seek', {hours: 1, minutes: 10, seconds: 10});
+//remote.invoke('GUI.showSubtitleWindow');
 //*/
+
 
 module.exports = remote;
