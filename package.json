@@ -1,8 +1,9 @@
 {
   "name": "node-xbmc-http",
   "description": "XBMC remote over http",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Nitesh Anand",
+  "main": "xbmc-remote.js",
   "dependencies": {
     "node.extend": "1.0.7"
   },
