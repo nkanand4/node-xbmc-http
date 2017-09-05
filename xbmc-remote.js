@@ -1,22 +1,22 @@
 var xbmcApi = require('./main');
 var connection;
 var specials = {
-    'ShowOSD' : {
+    'ShowOSDs' : {
     	'noplayer': 'Input.ContextMenu'
     },
-    'Up': {
+    'Ups': {
     	'player': 'Application.IncreaseVolume'
     },
-    'Down': {
+    'Downs': {
     	'player': 'Application.ReduceVolume'
     },
-    'Right': {
+    'Rights': {
         'player': 'Player.Forward'
     },
-    'Left': {
+    'Lefts': {
         'player': 'Player.Rewind'
     },
-    'Select': {
+    'Selects': {
         'player': 'Player.Stop'
     }
 };
@@ -26,10 +26,17 @@ module.exports = {
     changeDefaults: function() {
         xbmcApi.getInstance('Application').step = 5;
     },
+    mute: function () {xbmcApi.invoke('Application.SetVolume', 0);},
+    unmute: function () {xbmcApi.invoke('Application.SetVolume', 100);},
     add: function(cmd) {
         var args = [].splice.call(arguments, 0);
         this.changeDefaults();
-        this.fire.apply(this, args);
+        try {
+            this.fire.apply(this, args);
+        }catch(e) {
+            // re-request the connection by requiring main.js
+            //this.fire.apply(this, args);
+        }
     },
     identifyCommand: function(command) {
         var temp = command.split('.');
@@ -47,7 +54,7 @@ module.exports = {
         console.log('Doing', command.name, 'on', command.category);
         if (command.name in specials) {
             xbmcApi.invoke('Player.GetActivePlayers', function(data) {
-                var specialCommand
+                var specialCommand,
                     condition = data.result.length === 0 ? 'noplayer' : 'player';
                 console.log('Got specials one for ', condition);
                 if (specials[command.name] && condition in specials[command.name]) {
